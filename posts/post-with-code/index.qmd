@@ -1,0 +1,71 @@
+---
+title: "Cotação do Dólar"
+author: "Matheus"
+date: "2025-11-24"
+categories: [API, code, python]
+image: "dollar-6771234_1280.jpg"
+jupyter: python3
+---
+
+Neste post, desenvolvi uma rotina em Python capaz de consultar o valor do dólar em todos os dias do mês de Novembro de 2012.
+
+Primeiramente, fiz a importação das bibliotecas para auxiliar na consulta da API, e para a contabilidade em questão de dias do calendário:
+
+```{python}
+import requests
+import pandas as pd
+import calendar
+from datetime import datetime, timedelta
+import plotly.express as px
+```
+
+Abaixo, está a função "cotar_dia", que recebe a data no formato MMDDYYYY. A API retornará vazio se for feriado, sábado ou domingo, então nesse caso usa-se a recursão (quando a função chama a si mesmo), com o intuito de pegar o dia anterior. Além disso, utiliza-se datas convertendo em string: strptime e strftime.
+
+```{python}
+def cotar_dia(data):
+    url = (
+        "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/"
+        f"CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='{data}'&$format=json"
+    )
+    res = requests.get(url).json()
+
+    if res["value"]:
+        return res["value"][0]["cotacaoVenda"]
+
+    dia_anterior = datetime.strptime(data, "%m%d%Y") - timedelta(1)
+    dia_anterior = datetime.strftime(dia_anterior, "%m%d%Y")
+
+    return cotar_dia(dia_anterior)
+```
+
+Nas próximas linhas, a função cotacao_mes recebe "data_string" como parâmetro, e então produz o gráfico do mês completo, incluindo finais de semana e os feriados. Continuamente, temos o retorno em forma de gráfico com apoio do "show()", em que se executa visualmente os valores de cada dia de Novembro de 2012.
+
+```{python}
+def cotacao_mes(data_string):
+
+    first_date = datetime.strptime(data_string, "%m%Y")
+    last_day = calendar.monthrange(first_date.year, first_date.month)[1]
+    last_date = first_date.replace(day=last_day)
+
+    dias = pd.date_range(first_date, last_date)
+
+    dados = []
+    for d in dias:
+        data_str = d.strftime("%m%d%Y")
+        valor = cotar_dia(data_str)
+        dados.append([d.date(), valor])
+
+    df = pd.DataFrame(dados, columns=["data", "cotacao"])
+
+    fig = px.line(df, x="data", y="cotacao",
+                  title=f"Cotação do Dólar(Novembro/2012) – {data_string[:2]}/{data_string[2:]}")
+    fig.show()
+
+    return df
+```
+
+Em seguida, temos a execução do código.
+
+```{python}
+cotacao_mes("112012")
+```

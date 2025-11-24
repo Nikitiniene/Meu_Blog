@@ -1,0 +1,45 @@
+---
+title: "Monitoramento da Frota de Ônibus"
+author: "Matheus"
+date: "2025-11-24"
+categories: [API, code, python]
+image: "tres-onibus-na-rodovia-ao-nascer-do-sol_674594-29515.jpg"
+jupyter: python3
+---
+Nesse post, criei um código para observar as frotas de ônibus da Vila Prudente ao Parque Ibirapuera.
+
+Primeiramente, importei as bibliotecas para pegar a API da SPTRANS, e gerar o mapa.
+```{python}
+import requests
+import folium
+```
+
+Então, gerei o TOKEN, e posicionei o número da linha de ônibus. O código faz a consulta das paradas da linha e a posição dos veículos rodando. Com o folium, ele consegue gerar o mapa interativo em html, e distribuir as linhas no mapa.
+```{python}
+TOKEN = "c1480313dbd75eff5f3187a5dae0c569ff69e2b55f4781ed07d37cfb9d442a46"
+LINHA = 4310
+
+sessao = requests.Session()
+sessao.post(f"http://api.olhovivo.sptrans.com.br/v2.1/Login/Autenticar?token={TOKEN}")
+
+paradas = sessao.get(f"http://api.olhovivo.sptrans.com.br/v2.1/Parada/BuscarParadasPorLinha?codigoLinha={LINHA}").json()
+
+posicoes = sessao.get("http://api.olhovivo.sptrans.com.br/v2.1/Posicao").json()
+
+onibus_linha = []
+for linha in posicoes["l"]:
+    if linha["cl"] == LINHA:
+        onibus_linha = linha["vs"]
+        break
+
+centro = [paradas[0]["py"], paradas[0]["px"]] if paradas else [-23.55, -46.63]
+mapa = folium.Map(location=centro, zoom_start=13)
+
+for p in paradas:
+    folium.Marker([p["py"], p["px"]], popup=p["np"], icon=folium.Icon(color="blue")).add_to(mapa)
+
+for b in onibus_linha:
+    folium.Marker([b["py"], b["px"]], popup=f"Prefixo: {b['p']}", icon=folium.Icon(color="red", icon="bus")).add_to(mapa)
+
+mapa.save("mapa_onibus.html")
+```

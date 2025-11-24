@@ -1,0 +1,12 @@
+{
+  "hash": "c86820d72a7efd22774e11688408412d",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Monitoramento da Frota de Ônibus\"\nauthor: \"Matheus\"\ndate: \"2025-11-24\"\ncategories: [API, code, python]\nimage: \"tres-onibus-na-rodovia-ao-nascer-do-sol_674594-29515.jpg\"\njupyter: python3\n---\n\n::: {#1f5cb9f0 .cell execution_count=1}\n``` {.python .cell-code}\nimport requests\nimport folium\n\nTOKEN = \"c1480313dbd75eff5f3187a5dae0c569ff69e2b55f4781ed07d37cfb9d442a46\"\nLINHA = 4310\n\nsessao = requests.Session()\nsessao.post(f\"http://api.olhovivo.sptrans.com.br/v2.1/Login/Autenticar?token={TOKEN}\")\n\nparadas = sessao.get(f\"http://api.olhovivo.sptrans.com.br/v2.1/Parada/BuscarParadasPorLinha?codigoLinha={LINHA}\").json()\n\nposicoes = sessao.get(\"http://api.olhovivo.sptrans.com.br/v2.1/Posicao\").json()\n\nonibus_linha = []\nfor linha in posicoes[\"l\"]:\n    if linha[\"cl\"] == LINHA:\n        onibus_linha = linha[\"vs\"]\n        break\n\ncentro = [paradas[0][\"py\"], paradas[0][\"px\"]] if paradas else [-23.55, -46.63]\nmapa = folium.Map(location=centro, zoom_start=13)\n\nfor p in paradas:\n    folium.Marker([p[\"py\"], p[\"px\"]], popup=p[\"np\"], icon=folium.Icon(color=\"blue\")).add_to(mapa)\n\nfor b in onibus_linha:\n    folium.Marker([b[\"py\"], b[\"px\"]], popup=f\"Prefixo: {b['p']}\", icon=folium.Icon(color=\"red\", icon=\"bus\")).add_to(mapa)\n\nmapa.save(\"mapa_onibus.html\")\n```\n:::\n\n\n",
+    "supporting": [
+      "index2_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
