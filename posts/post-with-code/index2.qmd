@@ -43,3 +43,5 @@ for b in onibus_linha:
 
 mapa.save("mapa_onibus.html")
 ```
+
+[Mapa interativo da linha de ônibus](../assets/mapa_onibus.png)
