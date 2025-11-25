@@ -1,0 +1,48 @@
+---
+title: "Regressão Linear"
+author: "Matheus"
+date: "2025-11-24"
+categories: [code, python]
+image: "OIP.vqdOylQl9cB390nVTT-YCAHaE7?rs=1"
+jupyter: python3
+---
+Neste post temos um gráfico de regressão linear que relaciona os anos de estudo com o salário.
+
+Primeiramente, se importa as bibliotecas necessárias para a atividade para criar o gráfico e ler os dados
+```{python}
+import numpy as np
+import pandas as pd
+from plotnine import ggplot, aes, geom_point, geom_abline
+```
+
+No código abaixo tem-se o carregamento dos arquivos necessários para o gráfico, junto com a criação da coluna do X (os anos de estudo) e a formula matricial (seguindo o cálculo dos coeficientes)
+```{python}
+X = np.loadtxt("X.txt")   
+y = np.loadtxt("y.txt")   
+
+X_matrix = np.column_stack((np.ones(len(X)), X))
+
+beta = np.linalg.inv(X_matrix.T @ X_matrix) @ X_matrix.T @ y
+
+a, b = beta[0], beta[1]   
+
+print("Interceptação de (a):", a)
+print("Inclinação de (b):", b)
+```
+Seguidamente, temos um dataframe para gerar as duas colunas X (para os anos de estudo) e Y (para o salário). Continuando, o "plot" vai agregar o gráfico e salva-lo como imagem png.
+```{python}
+df = pd.DataFrame({"x": X, "y": y})
+
+plot = (
+    ggplot(df, aes("x", "y"))
+    + geom_point()
+    + geom_abline(intercept=a, slope=b)
+)
+
+plot.save("grafico.png")  
+
+plot
+
+```
+
+![Gráfico da regressão linear](grafico.png)
