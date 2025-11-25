@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Meu_Blog",
+    "section": "",
+    "text": "Cotação do Dólar\n\n\n\nAPI\n\ncode\n\npython\n\n\n\n\n\n\n\n\n\nNov 24, 2025\n\n\nMatheus\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoramento da Frota de Ônibus\n\n\n\nAPI\n\ncode\n\npython\n\n\n\n\n\n\n\n\n\nNov 24, 2025\n\n\nMatheus\n\n\n\n\n\n\n\n\n\n\n\n\nRegressão Linear\n\n\n\ncode\n\npython\n\n\n\n\n\n\n\n\n\nNov 24, 2025\n\n\nMatheus\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNov 21, 2025\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/post-with-code/index3.html",
+    "href": "posts/post-with-code/index3.html",
+    "title": "Regressão Linear",
+    "section": "",
+    "text": "Neste post temos um gráfico de regressão linear que relaciona os anos de estudo com o salário.\nPrimeiramente, se importa as bibliotecas necessárias para a atividade para criar o gráfico e ler os dados\n\nimport numpy as np\nimport pandas as pd\nfrom plotnine import ggplot, aes, geom_point, geom_abline\n\nNo código abaixo tem-se o carregamento dos arquivos necessários para o gráfico, junto com a criação da coluna do X (os anos de estudo) e a formula matricial (seguindo o cálculo dos coeficientes)\n\nX = np.loadtxt(\"X.txt\")   \ny = np.loadtxt(\"y.txt\")   \n\nX_matrix = np.column_stack((np.ones(len(X)), X))\n\nbeta = np.linalg.inv(X_matrix.T @ X_matrix) @ X_matrix.T @ y\n\na, b = beta[0], beta[1]   \n\nprint(\"Interceptação de (a):\", a)\nprint(\"Inclinação de (b):\", b)\n\nInterceptação de (a): 373.93446839130695\nInclinação de (b): 991.6278332981966\n\n\nSeguidamente, temos um dataframe para gerar as duas colunas X (para os anos de estudo) e Y (para o salário). Continuando, o “plot” vai agregar o gráfico e salva-lo como imagem png.\n\ndf = pd.DataFrame({\"x\": X, \"y\": y})\n\nplot = (\n    ggplot(df, aes(\"x\", \"y\"))\n    + geom_point()\n    + geom_abline(intercept=a, slope=b)\n)\n\nplot.save(\"grafico.png\")  \n\n/home/codespace/.python/current/lib/python3.12/site-packages/plotnine/ggplot.py:623: PlotnineWarning: Saving 7.0 x 5.0 in image.\n/home/codespace/.python/current/lib/python3.12/site-packages/plotnine/ggplot.py:624: PlotnineWarning: Filename: grafico.png\n\n\n\n\n\nGráfico da regressão linear"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  }
+]

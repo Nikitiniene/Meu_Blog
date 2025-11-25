@@ -1,0 +1,12 @@
+{
+  "hash": "c12e5ffa72ea1cc4fd01b429daf69a84",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: Regressão Linear\nauthor: Matheus\ndate: '2025-11-24'\ncategories:\n  - code\n  - python\nimage: OIP.vqdOylQl9cB390nVTT-YCAHaE7?rs=1\n---\n\nNeste post temos um gráfico de regressão linear que relaciona os anos de estudo com o salário.\n\nPrimeiramente, se importa as bibliotecas necessárias para a atividade para criar o gráfico e ler os dados\n\n::: {#9649810d .cell execution_count=1}\n``` {.python .cell-code}\nimport numpy as np\nimport pandas as pd\nfrom plotnine import ggplot, aes, geom_point, geom_abline\n```\n:::\n\n\nNo código abaixo tem-se o carregamento dos arquivos necessários para o gráfico, junto com a criação da coluna do X (os anos de estudo) e a formula matricial (seguindo o cálculo dos coeficientes)\n\n::: {#3cbe8195 .cell execution_count=2}\n``` {.python .cell-code}\nX = np.loadtxt(\"X.txt\")   \ny = np.loadtxt(\"y.txt\")   \n\nX_matrix = np.column_stack((np.ones(len(X)), X))\n\nbeta = np.linalg.inv(X_matrix.T @ X_matrix) @ X_matrix.T @ y\n\na, b = beta[0], beta[1]   \n\nprint(\"Interceptação de (a):\", a)\nprint(\"Inclinação de (b):\", b)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nInterceptação de (a): 373.93446839130695\nInclinação de (b): 991.6278332981966\n```\n:::\n:::\n\n\nSeguidamente, temos um dataframe para gerar as duas colunas X (para os anos de estudo) e Y (para o salário). Continuando, o \"plot\" vai agregar o gráfico e salva-lo como imagem png.\n\n::: {#e2bcaf48 .cell execution_count=3}\n``` {.python .cell-code}\ndf = pd.DataFrame({\"x\": X, \"y\": y})\n\nplot = (\n    ggplot(df, aes(\"x\", \"y\"))\n    + geom_point()\n    + geom_abline(intercept=a, slope=b)\n)\n\nplot.save(\"grafico.png\")  \n```\n\n::: {.cell-output .cell-output-stderr}\n```\n/home/codespace/.python/current/lib/python3.12/site-packages/plotnine/ggplot.py:623: PlotnineWarning: Saving 7.0 x 5.0 in image.\n/home/codespace/.python/current/lib/python3.12/site-packages/plotnine/ggplot.py:624: PlotnineWarning: Filename: grafico.png\n```\n:::\n:::\n\n\n![Gráfico da regressão linear](grafico.png)\n\n",
+    "supporting": [
+      "index3_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

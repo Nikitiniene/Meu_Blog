@@ -41,8 +41,6 @@ plot = (
 
 plot.save("grafico.png")  
 
-plot
-
 ```
 
 ![Gráfico da regressão linear](grafico.png)
